@@ -18,6 +18,6 @@ public class EmployeeEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
-    private Date dob;
+   // private Date dob;
     private String age;
 }

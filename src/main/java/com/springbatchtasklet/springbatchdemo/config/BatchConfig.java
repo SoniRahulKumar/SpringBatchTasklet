@@ -37,12 +37,27 @@ public class BatchConfig {
                 .build();
     }
 
+//    @Bean
+//    Step csvToDbStore(JobRepository jobRepository, PlatformTransactionManager transactionManager,
+//                      JdbcTemplate jdbcTemplate) {
+//        return new StepBuilder("csvToDbStore", jobRepository)
+//                .allowStartIfComplete(true)
+//                .tasklet(new CsvToDbTasklet(), transactionManager)
+//                .build();
+//    }
+
+    @Bean
+    public CsvToDbTasklet csvToDbTasklet() {
+        return new CsvToDbTasklet();
+    }
+
     @Bean
     Step csvToDbStore(JobRepository jobRepository, PlatformTransactionManager transactionManager,
                       JdbcTemplate jdbcTemplate) {
         return new StepBuilder("csvToDbStore", jobRepository)
                 .allowStartIfComplete(true)
-                .tasklet(new CsvToDbTasklet(), transactionManager)
+                .tasklet(csvToDbTasklet()
+                        , transactionManager)
                 .build();
     }
 
@@ -52,10 +67,11 @@ public class BatchConfig {
                 .start(readData(jobRepository, transactionManager))
                 .next(processData(jobRepository, transactionManager))
                 .next(writeData(jobRepository, transactionManager))
-                .next(csvToDbStore(jobRepository, transactionManager,jdbcTemplate))
+                .next(csvToDbStore(jobRepository, transactionManager, jdbcTemplate))
                 //.next(fileZipAndDeleting(jobRepository, transactionManager))
                 .build();
     }
+
     @Bean
     Step fileZipAndDeleting(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
         return new StepBuilder("fileZipAndDeleting", jobRepository)
